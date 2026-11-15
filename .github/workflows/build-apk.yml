@@ -10,23 +10,25 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Godot Engine
+      - name: Set up Godot Engine & Templates
         run: |
           GODOT_VERSION="4.3-stable"
+          GODOT_DIR="4.3.stable"
+          
+          # Download and install Godot binary
           wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip
           unzip Godot_v${GODOT_VERSION}_linux.x86_64.zip
           sudo mv Godot_v${GODOT_VERSION}_linux.x86_64 /usr/local/bin/godot
           
+          # Download and extract export templates directly into the exact version folder
           wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz
-          mkdir -p ~/.local/share/godot/export_templates/
+          mkdir -p ~/.local/share/godot/export_templates/${GODOT_DIR}
           unzip -q Godot_v${GODOT_VERSION}_export_templates.tpz
-          mv templates ~/.local/share/godot/export_templates/${GODOT_VERSION}
+          mv templates/* ~/.local/share/godot/export_templates/${GODOT_DIR}/
 
-      - name: Create Missing Export Preset
+      - name: Create Valid Export Preset
         run: |
-          if [ ! -f "export_presets.cfg" ]; then
-            echo "Creating default export_presets.cfg for Android..."
-            cat << 'EOF' > export_presets.cfg
+          cat << 'EOF' > export_presets.cfg
           [preset.0]
           name="Android"
           platform="Android"
@@ -43,15 +45,17 @@ jobs:
           file_export_mode=0
 
           [preset.0.options]
+          version/code=1
+          version/name="1.0"
+          package/unique_name="org.cannot4071.angrytux"
           EOF
-          fi
 
       - name: Import Assets and Export Android APK
         run: |
           mkdir -p build/android
-          # Force Godot to import project resources before exporting
-          godot --headless --import --quit
-          # Export release APK
+          # Force Godot to initialize and import all project resources
+          godot --headless --editor --quit
+          # Export release APK using the Android preset
           godot --headless --export-release "Android" build/android/angry-tux.apk
 
       - name: Upload APK Artifact
