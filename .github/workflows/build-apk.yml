@@ -71,7 +71,7 @@ jobs:
           EOF
           fi
 
-      - name: Create Complete Android Export Preset
+      - name: Create Full Android Export Preset
         run: |
           cat << 'EOF' > export_presets.cfg
           [preset.0]
@@ -90,21 +90,34 @@ jobs:
           file_export_mode=0
 
           [preset.0.options]
+          custom_template/debug=""
+          custom_template/release=""
+          command_line/extra_args=""
+          binary_format/64_bit=true
+          use_32_bits=false
+          export_format=0
           custom_build/use_custom_build=false
-          version/code=1
-          version/name="1.0"
-          package/unique_name="org.cannot4071.angrytux"
-          package/name="Angry Tux"
           architectures/armv7=true
           architectures/arm64_v8a=true
+          architectures/x86=false
+          architectures/x86_64=false
+          keystore/debug="/home/runner/.android/debug.keystore"
+          keystore/debug_user="androiddebugkey"
+          keystore/debug_password="android"
+          keystore/release=""
+          keystore/release_user=""
+          keystore/release_password=""
+          package/unique_name="org.cannot4071.angrytux"
+          package/name="Angry Tux"
+          package/signed=true
+          package/app_category=0
+          package/retain_data_on_uninstall=false
           EOF
 
       - name: Initialize Project and Export Android APK
         run: |
           mkdir -p build/android
-          # Initialize project metadata and import assets in headless mode
           godot --headless --path . --editor --quit
-          # Export release APK with explicit path pointing to root directory
           godot --headless --path . --export-release "Android" build/android/angry-tux.apk
 
       - name: Upload APK Artifact
