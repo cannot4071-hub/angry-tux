@@ -3,7 +3,6 @@ project("angrytux")
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Automatically download and build Box2D via CMake FetchContent
 include(FetchContent)
 FetchContent_Declare(
     box2d
@@ -11,7 +10,6 @@ FetchContent_Declare(
     GIT_TAG v2.4.1
 )
 
-# Disable Box2D tests and examples to keep the Android build fast & lightweight
 set(BOX2D_BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
 set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "" FORCE)
 
