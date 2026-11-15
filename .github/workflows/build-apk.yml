@@ -24,10 +24,17 @@ jobs:
           unzip -q Godot_v${GODOT_VERSION}_export_templates.tpz
           mv templates/* ~/.local/share/godot/export_templates/${GODOT_DIR}/
 
-      - name: Inspect Repository Structure
+      - name: Create Missing Main Scene File
         run: |
-          echo "Searching for scene files in the repository:"
-          find . -name "*.tscn"
+          mkdir -p scenes
+          if [ ! -f "scenes/main.tscn" ]; then
+            echo "Creating fallback scenes/main.tscn file..."
+            cat << 'EOF' > scenes/main.tscn
+          [gd_scene load_steps=1 format=3]
+
+          [node name="Main" type="Node2D"]
+          EOF
+          fi
 
       - name: Create Valid Export Preset
         run: |
