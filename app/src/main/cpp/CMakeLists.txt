@@ -3,8 +3,19 @@ project("angrytux")
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Include Box2D physics engine
-add_subdirectory(box2d)
+# Automatically download and build Box2D via CMake FetchContent
+include(FetchContent)
+FetchContent_Declare(
+    box2d
+    GIT_REPOSITORY https://github.com/erincatto/box2d.git
+    GIT_TAG v2.4.1
+)
+
+# Disable Box2D tests and examples to keep the Android build fast & lightweight
+set(BOX2D_BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
+set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(box2d)
 
 add_library(angrytux SHARED
     main.cpp
@@ -16,7 +27,7 @@ target_include_directories(angrytux PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Core
     ${CMAKE_CURRENT_SOURCE_DIR}/Entities
-    ${CMAKE_CURRENT_SOURCE_DIR}/box2d/include
+    ${box2d_SOURCE_DIR}/include
 )
 
 find_library(log-lib log)
