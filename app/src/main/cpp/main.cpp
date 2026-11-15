@@ -1,4 +1,3 @@
-#initializer
 #include <jni.h>
 #include <android/sensor.h>
 #include <android/log.h>
@@ -56,7 +55,6 @@ void android_main(struct android_app* state) {
         }
 
         if (engine.animating) {
-            // Fixed timestep physics loop update
             engine.gameManager->updatePhysics(0.016f);
         }
     }
