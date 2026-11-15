@@ -15,10 +15,12 @@ jobs:
           GODOT_VERSION="4.3-stable"
           GODOT_DIR="4.3.stable"
           
+          # Download and install Godot editor binary
           wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip
           unzip Godot_v${GODOT_VERSION}_linux.x86_64.zip
           sudo mv Godot_v${GODOT_VERSION}_linux.x86_64 /usr/local/bin/godot
           
+          # Download and install export templates (REQUIRED for building APKs)
           wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz
           mkdir -p ~/.local/share/godot/export_templates/${GODOT_DIR}
           unzip -q Godot_v${GODOT_VERSION}_export_templates.tpz
