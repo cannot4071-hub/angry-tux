@@ -15,16 +15,19 @@ jobs:
           GODOT_VERSION="4.3-stable"
           GODOT_DIR="4.3.stable"
           
-          # Download and install Godot binary
           wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip
           unzip Godot_v${GODOT_VERSION}_linux.x86_64.zip
           sudo mv Godot_v${GODOT_VERSION}_linux.x86_64 /usr/local/bin/godot
           
-          # Download and extract export templates directly into the exact version folder
           wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz
           mkdir -p ~/.local/share/godot/export_templates/${GODOT_DIR}
           unzip -q Godot_v${GODOT_VERSION}_export_templates.tpz
           mv templates/* ~/.local/share/godot/export_templates/${GODOT_DIR}/
+
+      - name: Inspect Repository Structure
+        run: |
+          echo "Searching for scene files in the repository:"
+          find . -name "*.tscn"
 
       - name: Create Valid Export Preset
         run: |
@@ -53,9 +56,7 @@ jobs:
       - name: Import Assets and Export Android APK
         run: |
           mkdir -p build/android
-          # Force Godot to initialize and import all project resources
           godot --headless --editor --quit
-          # Export release APK using the Android preset
           godot --headless --export-release "Android" build/android/angry-tux.apk
 
       - name: Upload APK Artifact
