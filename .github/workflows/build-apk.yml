@@ -16,6 +16,9 @@ jobs:
           distribution: 'temurin'
           java-version: '8'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Generate Gradle Wrapper if Missing
         run: |
           if [ ! -f "gradlew" ]; then
