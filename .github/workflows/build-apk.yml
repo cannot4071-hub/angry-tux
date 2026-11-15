@@ -16,9 +16,6 @@ jobs:
           distribution: 'temurin'
           java-version: '8'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Generate Gradle Wrapper if Missing
         run: |
           if [ ! -f "gradlew" ]; then
@@ -31,6 +28,8 @@ jobs:
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
