@@ -1,38 +1,38 @@
-name: Build Android APK
+name: Export Godot Android APK
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  export-android:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew || true
-
-      - name: Build Android App
+      - name: Set up Godot Engine
         run: |
-          if [ -f "gradlew" ]; then
-            ./gradlew assemble || ./gradlew assembleDebug || ./gradlew :android:assembleDebug || ./gradlew :app:assembleDebug
-          else
-            gradle assemble
-          fi
-        env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
+          GODOT_VERSION="4.3-stable"
+          wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip
+          unzip Godot_v${GODOT_VERSION}_linux.x86_64.zip
+          sudo mv Godot_v${GODOT_VERSION}_linux.x86_64 /usr/local/bin/godot
+
+          # Download matching export templates
+          wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz
+          mkdir -p ~/.local/share/godot/export_templates/
+          unzip -q Godot_v${GODOT_VERSION}_export_templates.tpz
+          mv templates ~/.local/share/godot/export_templates/${GODOT_VERSION}
+
+      - name: Export Android APK
+        run: |
+          mkdir -p build/android
+          # Pre-heat cache to prevent import errors
+          godot --headless --editor --quit || true
+          # Export using your export preset name (change "Android" to match your export_presets.cfg name if different)
+          godot --headless --export-release "Android" build/android/angry-tux.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: angry-tux-apk
-          path: |
-            **/build/outputs/apk/debug/*.apk
-            **/build/outputs/apk/**/*.apk
+          path: build/android/angry-tux.apk
