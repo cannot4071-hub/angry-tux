@@ -42,7 +42,7 @@ jobs:
           [preset.0]
           name="Android"
           platform="Android"
-          runnable=true
+          runnable=false
           dedicated_server=false
           custom_features=""
           export_filter="all_resources"
@@ -55,9 +55,11 @@ jobs:
           file_export_mode=0
 
           [preset.0.options]
+          custom_build/use_custom_build=false
           version/code=1
           version/name="1.0"
           package/unique_name="org.cannot4071.angrytux"
+          package/name="Angry Tux"
           EOF
 
       - name: Import Assets and Export Android APK
